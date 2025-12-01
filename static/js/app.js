@@ -22,6 +22,8 @@ function showTab(tabName) {
         loadDashboard();
     } else if (tabName === 'products') {
         loadCategoriesForProduct();
+    } else if (tabName === 'manage-products') {
+        loadProductsList();
     } else if (tabName === 'transaction') {
         loadProductsForTransaction();
         loadRecentTransactions();
@@ -255,6 +257,53 @@ function deleteCategory(categoryId) {
             .catch(error => {
                 const message = error.response?.data?.error || 'Error deleting category';
                 showMessage(message, 'error', 'categoryMessage');
+            });
+    }
+}
+
+function loadProductsList() {
+    axios.get('/api/products')
+        .then(response => {
+            let html = '';
+            if (response.data.length === 0) {
+                html = '<p class="empty-state">No products created yet. Add one in the "Add Product" tab.</p>';
+            } else {
+                html = '<div class="products-grid">';
+                response.data.forEach(product => {
+                    const quantity = product.inventory?.quantity || 0;
+                    const totalValue = (product.price * quantity).toFixed(2);
+                    html += `
+                        <div class="product-card">
+                            <div class="product-header">
+                                <h4>${product.name}</h4>
+                                <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+                            </div>
+                            <p class="product-info"><strong>Code:</strong> ${product.sku}</p>
+                            <p class="product-info"><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+                            <p class="product-info"><strong>Stock:</strong> ${quantity} units</p>
+                            <p class="product-info"><strong>Value:</strong> $${totalValue}</p>
+                            <p class="product-description">${product.description || 'No description'}</p>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            document.getElementById('productsList').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading products:', error));
+}
+
+function deleteProduct(productId) {
+    if (confirm('Are you sure you want to delete this product? This will also delete all its transactions.')) {
+        axios.delete(`/api/products/${productId}`)
+            .then(response => {
+                showMessage('Product deleted successfully!', 'success', 'productMessage');
+                loadProductsList();
+                loadProductsForTransaction();
+            })
+            .catch(error => {
+                const message = error.response?.data?.error || 'Error deleting product';
+                showMessage(message, 'error', 'productMessage');
             });
     }
 }

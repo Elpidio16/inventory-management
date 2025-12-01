@@ -149,6 +149,35 @@ def create_category():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/categories/<category_id>', methods=['DELETE'])
+def delete_category(category_id):
+    """Delete a category"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if category exists
+        cursor.execute('SELECT id FROM categories WHERE id = ?', (category_id,))
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'Category not found'}), 404
+        
+        # Check if category has products
+        cursor.execute('SELECT COUNT(*) as count FROM products WHERE category_id = ?', (category_id,))
+        result = cursor.fetchone()
+        if result['count'] > 0:
+            conn.close()
+            return jsonify({'error': 'Cannot delete category with existing products'}), 400
+        
+        # Delete category
+        cursor.execute('DELETE FROM categories WHERE id = ?', (category_id,))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Category deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Products endpoints
 @app.route('/api/products', methods=['GET'])
 def get_products():
@@ -225,6 +254,35 @@ def create_product():
         }
         conn.close()
         return jsonify(product), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/products/<product_id>', methods=['DELETE'])
+def delete_product(product_id):
+    """Delete a product"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if product exists
+        cursor.execute('SELECT id FROM products WHERE id = ?', (product_id,))
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'Product not found'}), 404
+        
+        # Delete product transactions
+        cursor.execute('DELETE FROM transactions WHERE product_id = ?', (product_id,))
+        
+        # Delete product inventory
+        cursor.execute('DELETE FROM inventory WHERE product_id = ?', (product_id,))
+        
+        # Delete product
+        cursor.execute('DELETE FROM products WHERE id = ?', (product_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Product deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
