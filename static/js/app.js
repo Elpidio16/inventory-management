@@ -89,7 +89,8 @@ function loadDashboard() {
         });
 }
 
-function refreshDashboard() {
+function refreshDashboard(event) {
+    if (event) event.preventDefault();
     loadDashboard();
     showMessage('Tableau de bord rafraîchi !', 'success', 'productMessage');
 }
