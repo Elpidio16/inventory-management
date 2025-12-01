@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import uuid
 import sqlite3
+import json
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -13,74 +14,81 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Database setup
-DB_PATH = 'inventory.db'
+# Database setup - use /tmp for Vercel serverless, local for development
+DB_PATH = os.environ.get('DB_PATH', '/tmp/inventory.db') if os.environ.get('VERCEL') else 'inventory.db'
 
 def init_db():
     """Initialize SQLite database with tables"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Create categories table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS categories (
-            id TEXT PRIMARY KEY,
-            name TEXT UNIQUE NOT NULL,
-            description TEXT,
-            created_at TEXT,
-            updated_at TEXT
-        )
-    ''')
-    
-    # Create products table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS products (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            description TEXT,
-            sku TEXT UNIQUE NOT NULL,
-            price REAL NOT NULL,
-            category_id TEXT NOT NULL,
-            created_at TEXT,
-            updated_at TEXT,
-            FOREIGN KEY (category_id) REFERENCES categories(id)
-        )
-    ''')
-    
-    # Create inventory table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS inventory (
-            id TEXT PRIMARY KEY,
-            product_id TEXT UNIQUE NOT NULL,
-            quantity INTEGER DEFAULT 0,
-            last_updated TEXT,
-            FOREIGN KEY (product_id) REFERENCES products(id)
-        )
-    ''')
-    
-    # Create transactions table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS transactions (
-            id TEXT PRIMARY KEY,
-            product_id TEXT NOT NULL,
-            type TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            reason TEXT,
-            notes TEXT,
-            created_at TEXT,
-            updated_at TEXT,
-            FOREIGN KEY (product_id) REFERENCES products(id)
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        # Create categories table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS categories (
+                id TEXT PRIMARY KEY,
+                name TEXT UNIQUE NOT NULL,
+                description TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        # Create products table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS products (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                sku TEXT UNIQUE NOT NULL,
+                price REAL NOT NULL,
+                category_id TEXT NOT NULL,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (category_id) REFERENCES categories(id)
+            )
+        ''')
+        
+        # Create inventory table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS inventory (
+                id TEXT PRIMARY KEY,
+                product_id TEXT UNIQUE NOT NULL,
+                quantity INTEGER DEFAULT 0,
+                last_updated TEXT,
+                FOREIGN KEY (product_id) REFERENCES products(id)
+            )
+        ''')
+        
+        # Create transactions table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS transactions (
+                id TEXT PRIMARY KEY,
+                product_id TEXT NOT NULL,
+                type TEXT NOT NULL,
+                quantity INTEGER NOT NULL,
+                reason TEXT,
+                notes TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (product_id) REFERENCES products(id)
+            )
+        ''')
+        
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Database initialization error: {e}")
 
 def get_db_connection():
     """Get SQLite database connection"""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        raise
 
 # Initialize database on startup
 with app.app_context():
@@ -443,7 +451,14 @@ def not_found(error):
 
 @app.errorhandler(500)
 def server_error(error):
-    return jsonify({'error': 'Internal server error'}), 500
+    print(f"Server error: {error}")
+    return jsonify({'error': 'Internal server error', 'details': str(error)}), 500
+
+# Initialize database
+try:
+    init_db()
+except Exception as e:
+    print(f"Failed to initialize database: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
