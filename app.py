@@ -186,7 +186,7 @@ def delete_product_endpoint(product_id):
 def get_transactions_endpoint():
     """Get all transactions"""
     try:
-        transactions = Transaction.query.order_by(Transaction.created_at.desc()).all()
+        transactions = Transaction.query.options(db.joinedload(Transaction.product)).order_by(Transaction.created_at.desc()).all()
         return jsonify([trans.to_dict() for trans in transactions]), 200
     except Exception as e:
         print(f"Error: {e}")

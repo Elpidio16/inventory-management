@@ -84,7 +84,6 @@ class Transaction(db.Model):
     
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     product_id = db.Column(db.String(36), db.ForeignKey('products.id'), nullable=False)
-    product = db.relationship('Product', lazy='joined')
     type = db.Column(db.String(10), nullable=False)  # ENTRY or EXIT
     quantity = db.Column(db.Integer, nullable=False)
     reason = db.Column(db.String(255), default='')
