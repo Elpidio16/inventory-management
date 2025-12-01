@@ -18,8 +18,26 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-# Initialize database
-init_db(app)
+# Flag to track if DB is initialized
+_db_initialized = False
+
+def ensure_db_initialized():
+    """Safely initialize database on first request"""
+    global _db_initialized
+    if not _db_initialized:
+        try:
+            init_db(app)
+            _db_initialized = True
+            print("Database initialized successfully")
+        except Exception as e:
+            print(f"Warning: Could not initialize database: {e}")
+            _db_initialized = False
+
+# Initialize DB on first request (not on module load)
+@app.before_request
+def before_request():
+    """Ensure database is initialized before each request"""
+    ensure_db_initialized()
 
 # Home route
 @app.route('/')

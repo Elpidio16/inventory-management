@@ -104,7 +104,12 @@ class Transaction(db.Model):
         }
 
 def init_db(app):
-    """Initialize database"""
-    with app.app_context():
-        db.create_all()
-        print("Database tables created successfully")
+    """Initialize database safely"""
+    try:
+        with app.app_context():
+            db.create_all()
+            print("Database tables created successfully")
+            return True
+    except Exception as e:
+        print(f"Error initializing database: {e}")
+        return False
