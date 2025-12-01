@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">📦 Inventory Management System</h1>
+            <div class="nav-links">
+                <a href="#" onclick="showTab('dashboard')" class="nav-link active">Dashboard</a>
+                <a href="#" onclick="showTab('products')" class="nav-link">Add Product</a>
+                <a href="#" onclick="showTab('transaction')" class="nav-link">Record Transaction</a>
+                <a href="#" onclick="showTab('categories')" class="nav-link">Manage Categories</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="page-title">
+                <h2>Dashboard</h2>
+                <button class="btn btn-refresh" onclick="refreshDashboard()">🔄 Refresh</button>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-label">Total Products</div>
+                    <div class="card-value" id="totalProducts">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Inventory</div>
+                    <div class="card-value" id="totalQuantity">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Inventory Value</div>
+                    <div class="card-value" id="totalPrice">$0.00</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Categories</div>
+                    <div class="card-value" id="totalCategories">0</div>
+                </div>
+            </div>
+
+            <!-- Inventory by Category -->
+            <div class="card-section">
+                <h3>Inventory by Category</h3>
+                <div id="inventoryByCategory">
+                    <p class="loading">Loading inventory data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Product Tab -->
+        <div id="products" class="tab-content">
+            <div class="page-title">
+                <h2>Add New Product</h2>
+            </div>
+
+            <div class="form-card">
+                <form id="productForm" onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productSku">SKU</label>
+                        <input type="text" id="productSku" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Price</label>
+                        <input type="number" id="productPrice" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+                        <select id="productCategory" required>
+                            <option value="">Select a category</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" rows="4"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                    <div id="productMessage" class="message" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Record Transaction Tab -->
+        <div id="transaction" class="tab-content">
+            <div class="page-title">
+                <h2>Record Transaction</h2>
+            </div>
+
+            <div class="form-card">
+                <form id="transactionForm" onsubmit="recordTransaction(event)">
+                    <div class="form-group">
+                        <label for="transactionType">Transaction Type</label>
+                        <select id="transactionType" required>
+                            <option value="ENTRY">Entry (Product Received)</option>
+                            <option value="EXIT">Exit (Product Sold)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionProduct">Product</label>
+                        <select id="transactionProduct" required>
+                            <option value="">Select a product</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionQuantity">Quantity</label>
+                        <input type="number" id="transactionQuantity" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionReason">Reason</label>
+                        <input type="text" id="transactionReason" placeholder="e.g., Purchase Order, Customer Sale">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionNotes">Notes</label>
+                        <textarea id="transactionNotes" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Record Transaction</button>
+                    <div id="transactionMessage" class="message" style="display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card-section" style="margin-top: 2rem;">
+                <h3>Recent Transactions</h3>
+                <div id="recentTransactions">
+                    <p class="loading">Loading transactions...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Categories Tab -->
+        <div id="categories" class="tab-content">
+            <div class="page-title">
+                <h2>Manage Categories</h2>
+            </div>
+
+            <!-- Add Category Form -->
+            <div class="form-card">
+                <h3>Add New Category</h3>
+                <form id="categoryForm" onsubmit="addCategory(event)">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryDescription">Description</label>
+                        <textarea id="categoryDescription" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                    <div id="categoryMessage" class="message" style="display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Categories List -->
+            <div class="card-section">
+                <h3>All Categories</h3>
+                <div id="categoriesList">
+                    <p class="loading">Loading categories...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
