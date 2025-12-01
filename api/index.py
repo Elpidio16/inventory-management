@@ -1,4 +1,8 @@
-from app import app
+import sys
+import os
+from pathlib import Path
 
-def handler(request):
-    return app(request)
+# Add parent directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from app import app as application
