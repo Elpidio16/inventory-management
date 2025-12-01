@@ -4,6 +4,6 @@
   "description": "Inventory Management System with entries and exits tracking",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
