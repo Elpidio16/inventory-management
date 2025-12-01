@@ -6,8 +6,17 @@ from pathlib import Path
 
 # Data file path - use /tmp for Vercel, local for development
 DATA_DIR = Path(os.environ.get('DATA_DIR', '.')) / 'data'
-DATA_DIR.mkdir(exist_ok=True)
 DATA_FILE = DATA_DIR / 'inventory.json'
+
+# Ensure directory exists (safe version for serverless)
+def _ensure_data_dir():
+    """Safely create data directory"""
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        return True
+    except Exception as e:
+        print(f"Warning: Could not create data directory: {e}")
+        return False
 
 def init_data():
     """Initialize data file with empty structure"""
@@ -24,6 +33,7 @@ def init_data():
 def load_data():
     """Load data from JSON file"""
     try:
+        _ensure_data_dir()
         if DATA_FILE.exists():
             with open(DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -46,6 +56,7 @@ def load_data():
 def save_data(data):
     """Save data to JSON file"""
     try:
+        _ensure_data_dir()
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         return True
@@ -245,6 +256,3 @@ def get_inventory_stats():
         'total_price': round(total_price, 2),
         'categories': categories_data
     }
-
-# Initialize data on import
-init_data()
