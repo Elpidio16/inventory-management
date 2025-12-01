@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
+    <title>lesageconsulting</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
@@ -11,7 +11,10 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="nav-title">📦 Inventory Management System</h1>
+            <div class="nav-logo-section">
+                <img src="{{ url_for('static', filename='lesageconsulting.png') }}" alt="lesageconsulting logo" class="nav-logo">
+                <h1 class="nav-title">lesageconsulting</h1>
+            </div>
             <div class="nav-links">
                 <a href="#" onclick="showTab('dashboard')" class="nav-link active">Dashboard</a>
                 <a href="#" onclick="showTab('products')" class="nav-link">Add Product</a>
