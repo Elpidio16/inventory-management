@@ -39,7 +39,7 @@ function loadDashboard() {
             const data = response.data;
             document.getElementById('totalProducts').textContent = data.total_products;
             document.getElementById('totalQuantity').textContent = data.total_quantity;
-            document.getElementById('totalPrice').textContent = '$' + data.total_price.toFixed(2);
+            document.getElementById('totalPrice').textContent = data.total_price.toFixed(2) + ' FCFA';
             document.getElementById('totalCategories').textContent = data.categories.length;
 
             // Build inventory by category table
@@ -56,7 +56,7 @@ function loadDashboard() {
                                 <thead>
                                     <tr>
                                         <th>Product</th>
-                                        <th>Price</th>
+                                        <th>Price (FCFA)</th>
                                         <th>Quantity</th>
                                         <th>Value</th>
                                     </tr>
@@ -68,7 +68,7 @@ function loadDashboard() {
                         html += `
                             <tr>
                                 <td>${product.name}</td>
-                                <td>$${product.price.toFixed(2)}</td>
+                                <td>${product.price.toFixed(2)} FCFA</td>
                                 <td>${product.quantity}</td>
                                 <td>$${value}</td>
                             </tr>
@@ -137,7 +137,7 @@ function loadProductsForTransaction() {
             const select = document.getElementById('transactionProduct');
             select.innerHTML = '<option value="">Select a product</option>';
             response.data.forEach(product => {
-                select.innerHTML += `<option value="${product.id}">${product.name} ($${product.price.toFixed(2)})</option>`;
+                select.innerHTML += `<option value="${product.id}">${product.name} (${product.price.toFixed(2)} FCFA)</option>`;
             });
         })
         .catch(error => console.error('Error loading products:', error));
@@ -279,7 +279,7 @@ function loadProductsList() {
                                 <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
                             </div>
                             <p class="product-info"><strong>Code:</strong> ${product.sku}</p>
-                            <p class="product-info"><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+                            <p class="product-info"><strong>Price:</strong> ${product.price.toFixed(2)} FCFA</p>
                             <p class="product-info"><strong>Stock:</strong> ${quantity} units</p>
                             <p class="product-info"><strong>Value:</strong> $${totalValue}</p>
                             <p class="product-description">${product.description || 'No description'}</p>
