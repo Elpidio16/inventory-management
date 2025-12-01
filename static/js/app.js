@@ -70,7 +70,7 @@ function loadDashboard() {
                                 <td>${product.name}</td>
                                 <td>${product.price.toFixed(2)} FCFA</td>
                                 <td>${product.quantity}</td>
-                                <td>$${value}</td>
+                                <td>${value} FCFA</td>
                             </tr>
                         `;
                     });
@@ -281,7 +281,7 @@ function loadProductsList() {
                             <p class="product-info"><strong>Code:</strong> ${product.sku}</p>
                             <p class="product-info"><strong>Price:</strong> ${product.price.toFixed(2)} FCFA</p>
                             <p class="product-info"><strong>Stock:</strong> ${quantity} units</p>
-                            <p class="product-info"><strong>Value:</strong> $${totalValue}</p>
+                            <p class="product-info"><strong>Value:</strong> ${totalValue} FCFA</p>
                             <p class="product-description">${product.description || 'No description'}</p>
                         </div>
                     `;
