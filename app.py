@@ -94,10 +94,10 @@ def create_product():
         if not all(field in data for field in required_fields):
             return jsonify({'error': 'Missing required fields'}), 400
         
-        # Check if SKU already exists
+        # Check if Product Code already exists
         for prod in DATA['products']:
             if prod['sku'] == data['sku']:
-                return jsonify({'error': 'Product with this SKU already exists'}), 400
+                return jsonify({'error': 'Product with this Product Code already exists'}), 400
         
         # Check if category exists
         category_exists = any(c['id'] == data['category_id'] for c in DATA['categories'])
