@@ -45,20 +45,20 @@ function loadDashboard() {
             // Build inventory by category table
             let html = '';
             if (data.categories.length === 0) {
-                html = '<p class="empty-state">No categories or products found. Create a category and add products to get started.</p>';
+                html = '<p class="empty-state">Aucune catégorie ou produit trouvés. Créez une catégorie et ajoutez des produits pour commencer.</p>';
             } else {
                 data.categories.forEach(category => {
                     html += `
                         <div class="category-section">
                             <h4>${category.name}</h4>
-                            <p class="category-meta">${category.product_count} products | ${category.total_quantity} items in stock</p>
+                            <p class="category-meta">${category.product_count} produits | ${category.total_quantity} articles en stock</p>
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Product</th>
-                                        <th>Price (FCFA)</th>
-                                        <th>Quantity</th>
-                                        <th>Value</th>
+                                        <th>Produit</th>
+                                        <th>Prix (FCFA)</th>
+                                        <th>Quantité</th>
+                                        <th>Valeur</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,14 +84,14 @@ function loadDashboard() {
             document.getElementById('inventoryByCategory').innerHTML = html;
         })
         .catch(error => {
-            console.error('Error loading dashboard:', error);
-            document.getElementById('inventoryByCategory').innerHTML = '<p class="error">Error loading inventory data</p>';
+            console.error('Erreur lors du chargement du tableau de bord:', error);
+            document.getElementById('inventoryByCategory').innerHTML = '<p class="error">Erreur lors du chargement des données de stock</p>';
         });
 }
 
 function refreshDashboard() {
     loadDashboard();
-    showMessage('Dashboard refreshed!', 'success', 'productMessage');
+    showMessage('Tableau de bord rafraîchi !', 'success', 'productMessage');
 }
 
 // Product Functions
@@ -121,11 +121,11 @@ function addProduct(event) {
     axios.post('/api/products', formData)
         .then(response => {
             document.getElementById('productForm').reset();
-            showMessage('Product added successfully!', 'success', 'productMessage');
+            showMessage('Produit ajouté avec succès !', 'success', 'productMessage');
             loadDashboard();
         })
         .catch(error => {
-            const message = error.response?.data?.error || 'Error adding product';
+            const message = error.response?.data?.error || 'Erreur lors de l\'ajout du produit';
             showMessage(message, 'error', 'productMessage');
         });
 }
@@ -157,12 +157,12 @@ function recordTransaction(event) {
     axios.post('/api/transactions', formData)
         .then(response => {
             document.getElementById('transactionForm').reset();
-            showMessage(`${formData.type === 'ENTRY' ? 'Entry' : 'Sale'} recorded successfully!`, 'success', 'transactionMessage');
+            showMessage(`${formData.type === 'ENTRY' ? 'Entrée' : 'Sortie'} enregistrée avec succès !`, 'success', 'transactionMessage');
             loadRecentTransactions();
             loadDashboard();
         })
         .catch(error => {
-            const message = error.response?.data?.error || 'Error recording transaction';
+            const message = error.response?.data?.error || 'Erreur lors de l\'enregistrement de la transaction';
             showMessage(message, 'error', 'transactionMessage');
         });
 }
@@ -172,16 +172,16 @@ function loadRecentTransactions() {
         .then(response => {
             let html = '';
             if (response.data.length === 0) {
-                html = '<p class="empty-state">No transactions recorded yet.</p>';
+                html = '<p class="empty-state">Aucune transaction enregistrée.</p>';
             } else {
-                html = '<table class="table"><thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Quantity</th><th>Reason</th></tr></thead><tbody>';
+                html = '<table class="table"><thead><tr><th>Date</th><th>Produit</th><th>Type</th><th>Quantité</th><th>Raison</th></tr></thead><tbody>';
                 response.data.slice(0, 10).forEach(transaction => {
-                    const date = new Date(transaction.created_at).toLocaleDateString();
+                    const date = new Date(transaction.created_at).toLocaleDateString('fr-FR');
                     html += `
                         <tr>
                             <td>${date}</td>
                             <td>${transaction.product.name}</td>
-                            <td><span class="badge ${transaction.type === 'ENTRY' ? 'badge-success' : 'badge-danger'}">${transaction.type}</span></td>
+                            <td><span class="badge ${transaction.type === 'ENTRY' ? 'badge-success' : 'badge-danger'}">${transaction.type === 'ENTRY' ? 'Entrée' : 'Sortie'}</span></td>
                             <td>${transaction.quantity}</td>
                             <td>${transaction.reason || '-'}</td>
                         </tr>
@@ -192,8 +192,8 @@ function loadRecentTransactions() {
             document.getElementById('recentTransactions').innerHTML = html;
         })
         .catch(error => {
-            console.error('Error loading transactions:', error);
-            document.getElementById('recentTransactions').innerHTML = '<p class="error">Error loading transactions</p>';
+            console.error('Erreur lors du chargement des transactions:', error);
+            document.getElementById('recentTransactions').innerHTML = '<p class="error">Erreur lors du chargement des transactions</p>';
         });
 }
 
@@ -203,7 +203,7 @@ function loadCategories() {
         .then(response => {
             let html = '';
             if (response.data.length === 0) {
-                html = '<p class="empty-state">No categories created yet. Add one below.</p>';
+                html = '<p class="empty-state">Aucune catégorie créée. Ajoutez-en une ci-dessous.</p>';
             } else {
                 html = '<div class="categories-grid">';
                 response.data.forEach(category => {
@@ -211,10 +211,10 @@ function loadCategories() {
                         <div class="category-card">
                             <div class="category-header">
                                 <h4>${category.name}</h4>
-                                <button class="btn btn-danger" onclick="deleteCategory('${category.id}')">Delete</button>
+                                <button class="btn btn-danger" onclick="deleteCategory('${category.id}')">Supprimer</button>
                             </div>
-                            <p class="category-description">${category.description || 'No description'}</p>
-                            <p class="category-meta">${category.product_count} products</p>
+                            <p class="category-description">${category.description || 'Aucune description'}</p>
+                            <p class="category-meta">${category.product_count} produits</p>
                         </div>
                     `;
                 });
@@ -222,7 +222,7 @@ function loadCategories() {
             }
             document.getElementById('categoriesList').innerHTML = html;
         })
-        .catch(error => console.error('Error loading categories:', error));
+        .catch(error => console.error('Erreur lors du chargement des catégories:', error));
 }
 
 function addCategory(event) {
@@ -236,26 +236,26 @@ function addCategory(event) {
     axios.post('/api/categories', formData)
         .then(response => {
             document.getElementById('categoryForm').reset();
-            showMessage('Category added successfully!', 'success', 'categoryMessage');
+            showMessage('Catégorie ajoutée avec succès !', 'success', 'categoryMessage');
             loadCategories();
             loadCategoriesForProduct();
         })
         .catch(error => {
-            const message = error.response?.data?.error || 'Error adding category';
+            const message = error.response?.data?.error || 'Erreur lors de l\'ajout de la catégorie';
             showMessage(message, 'error', 'categoryMessage');
         });
 }
 
 function deleteCategory(categoryId) {
-    if (confirm('Are you sure you want to delete this category?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
         axios.delete(`/api/categories/${categoryId}`)
             .then(response => {
-                showMessage('Category deleted successfully!', 'success', 'categoryMessage');
+                showMessage('Catégorie supprimée avec succès !', 'success', 'categoryMessage');
                 loadCategories();
                 loadCategoriesForProduct();
             })
             .catch(error => {
-                const message = error.response?.data?.error || 'Error deleting category';
+                const message = error.response?.data?.error || 'Erreur lors de la suppression de la catégorie';
                 showMessage(message, 'error', 'categoryMessage');
             });
     }
@@ -266,7 +266,7 @@ function loadProductsList() {
         .then(response => {
             let html = '';
             if (response.data.length === 0) {
-                html = '<p class="empty-state">No products created yet. Add one in the "Add Product" tab.</p>';
+                html = '<p class="empty-state">Aucun produit créé. Ajoutez-en un dans l\'onglet "Ajouter un produit".</p>';
             } else {
                 html = '<div class="products-grid">';
                 response.data.forEach(product => {
@@ -276,13 +276,13 @@ function loadProductsList() {
                         <div class="product-card">
                             <div class="product-header">
                                 <h4>${product.name}</h4>
-                                <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+                                <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Supprimer</button>
                             </div>
-                            <p class="product-info"><strong>Code:</strong> ${product.sku}</p>
-                            <p class="product-info"><strong>Price:</strong> ${product.price.toFixed(2)} FCFA</p>
-                            <p class="product-info"><strong>Stock:</strong> ${quantity} units</p>
-                            <p class="product-info"><strong>Value:</strong> ${totalValue} FCFA</p>
-                            <p class="product-description">${product.description || 'No description'}</p>
+                            <p class="product-info"><strong>Code :</strong> ${product.sku}</p>
+                            <p class="product-info"><strong>Prix :</strong> ${product.price.toFixed(2)} FCFA</p>
+                            <p class="product-info"><strong>Stock :</strong> ${quantity} unités</p>
+                            <p class="product-info"><strong>Valeur :</strong> ${totalValue} FCFA</p>
+                            <p class="product-description">${product.description || 'Aucune description'}</p>
                         </div>
                     `;
                 });
@@ -290,19 +290,19 @@ function loadProductsList() {
             }
             document.getElementById('productsList').innerHTML = html;
         })
-        .catch(error => console.error('Error loading products:', error));
+        .catch(error => console.error('Erreur lors du chargement des produits:', error));
 }
 
 function deleteProduct(productId) {
-    if (confirm('Are you sure you want to delete this product? This will also delete all its transactions.')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cela supprimera également toutes ses transactions.')) {
         axios.delete(`/api/products/${productId}`)
             .then(response => {
-                showMessage('Product deleted successfully!', 'success', 'productMessage');
+                showMessage('Produit supprimé avec succès !', 'success', 'productMessage');
                 loadProductsList();
                 loadProductsForTransaction();
             })
             .catch(error => {
-                const message = error.response?.data?.error || 'Error deleting product';
+                const message = error.response?.data?.error || 'Erreur lors de la suppression du produit';
                 showMessage(message, 'error', 'productMessage');
             });
     }

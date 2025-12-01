@@ -16,11 +16,11 @@
                 <h1 class="nav-title">lesageconsulting</h1>
             </div>
             <div class="nav-links">
-                <a href="#" onclick="showTab('dashboard')" class="nav-link active">Dashboard</a>
-                <a href="#" onclick="showTab('products')" class="nav-link">Add Product</a>
-                <a href="#" onclick="showTab('manage-products')" class="nav-link">Manage Products</a>
-                <a href="#" onclick="showTab('transaction')" class="nav-link">Record Transaction</a>
-                <a href="#" onclick="showTab('categories')" class="nav-link">Manage Categories</a>
+                <a href="#" onclick="showTab('dashboard')" class="nav-link active">Tableau de bord</a>
+                <a href="#" onclick="showTab('products')" class="nav-link">Ajouter un produit</a>
+                <a href="#" onclick="showTab('manage-products')" class="nav-link">Gérer les produits</a>
+                <a href="#" onclick="showTab('transaction')" class="nav-link">Enregistrer une transaction</a>
+                <a href="#" onclick="showTab('categories')" class="nav-link">Gérer les catégories</a>
             </div>
         </div>
     </nav>
@@ -30,35 +30,35 @@
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
             <div class="page-title">
-                <h2>Dashboard</h2>
-                <button class="btn btn-refresh" onclick="refreshDashboard()">🔄 Refresh</button>
+                <h2>Tableau de bord</h2>
+                <button class="btn btn-refresh" onclick="refreshDashboard()">🔄 Rafraîchir</button>
             </div>
 
             <!-- Summary Cards -->
             <div class="summary-cards">
                 <div class="card">
-                    <div class="card-label">Total Products</div>
+                    <div class="card-label">Nombre de produits</div>
                     <div class="card-value" id="totalProducts">0</div>
                 </div>
                 <div class="card">
-                    <div class="card-label">Total Inventory</div>
+                    <div class="card-label">Quantité en stock</div>
                     <div class="card-value" id="totalQuantity">0</div>
                 </div>
                 <div class="card">
-                    <div class="card-label">Total Inventory Value</div>
+                    <div class="card-label">Valeur totale du stock</div>
                     <div class="card-value" id="totalPrice">0.00 FCFA</div>
                 </div>
                 <div class="card">
-                    <div class="card-label">Categories</div>
+                    <div class="card-label">Catégories</div>
                     <div class="card-value" id="totalCategories">0</div>
                 </div>
             </div>
 
             <!-- Inventory by Category -->
             <div class="card-section">
-                <h3>Inventory by Category</h3>
+                <h3>Stock par catégorie</h3>
                 <div id="inventoryByCategory">
-                    <p class="loading">Loading inventory data...</p>
+                    <p class="loading">Chargement des données...</p>
                 </div>
             </div>
         </div>
@@ -66,30 +66,30 @@
         <!-- Add Product Tab -->
         <div id="products" class="tab-content">
             <div class="page-title">
-                <h2>Add New Product</h2>
+                <h2>Ajouter un nouveau produit</h2>
             </div>
 
             <div class="form-card">
                 <form id="productForm" onsubmit="addProduct(event)">
                     <div class="form-group">
-                        <label for="productName">Product Name</label>
+                        <label for="productName">Nom du produit</label>
                         <input type="text" id="productName" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="productSku">Product Code</label>
+                        <label for="productSku">Code produit</label>
                         <input type="text" id="productSku" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="productPrice">Price (FCFA)</label>
+                        <label for="productPrice">Prix (FCFA)</label>
                         <input type="number" id="productPrice" step="0.01" placeholder="Prix en FCFA" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="productCategory">Category</label>
+                        <label for="productCategory">Catégorie</label>
                         <select id="productCategory" required>
-                            <option value="">Select a category</option>
+                            <option value="">Sélectionner une catégorie</option>
                         </select>
                     </div>
 
@@ -98,7 +98,7 @@
                         <textarea id="productDescription" rows="4"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Add Product</button>
+                    <button type="submit" class="btn btn-primary">Ajouter le produit</button>
                     <div id="productMessage" class="message" style="display: none;"></div>
                 </form>
             </div>
@@ -107,34 +107,34 @@
         <!-- Record Transaction Tab -->
         <div id="transaction" class="tab-content">
             <div class="page-title">
-                <h2>Record Transaction</h2>
+                <h2>Enregistrer une transaction</h2>
             </div>
 
             <div class="form-card">
                 <form id="transactionForm" onsubmit="recordTransaction(event)">
                     <div class="form-group">
-                        <label for="transactionType">Transaction Type</label>
+                        <label for="transactionType">Type de transaction</label>
                         <select id="transactionType" required>
-                            <option value="ENTRY">Entry (Product Received)</option>
-                            <option value="EXIT">Exit (Product Sold)</option>
+                            <option value="ENTRY">Entrée (Produit reçu)</option>
+                            <option value="EXIT">Sortie (Produit vendu)</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="transactionProduct">Product</label>
+                        <label for="transactionProduct">Produit</label>
                         <select id="transactionProduct" required>
-                            <option value="">Select a product</option>
+                            <option value="">Sélectionner un produit</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="transactionQuantity">Quantity</label>
+                        <label for="transactionQuantity">Quantité</label>
                         <input type="number" id="transactionQuantity" min="1" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="transactionReason">Reason</label>
-                        <input type="text" id="transactionReason" placeholder="e.g., Purchase Order, Customer Sale">
+                        <label for="transactionReason">Raison</label>
+                        <input type="text" id="transactionReason" placeholder="ex. Commande, Vente client">
                     </div>
 
                     <div class="form-group">
@@ -142,16 +142,16 @@
                         <textarea id="transactionNotes" rows="3"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Record Transaction</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer la transaction</button>
                     <div id="transactionMessage" class="message" style="display: none;"></div>
                 </form>
             </div>
 
             <!-- Recent Transactions -->
             <div class="card-section" style="margin-top: 2rem;">
-                <h3>Recent Transactions</h3>
+                <h3>Transactions récentes</h3>
                 <div id="recentTransactions">
-                    <p class="loading">Loading transactions...</p>
+                    <p class="loading">Chargement des transactions...</p>
                 </div>
             </div>
         </div>
@@ -159,13 +159,13 @@
         <!-- Manage Products Tab -->
         <div id="manage-products" class="tab-content">
             <div class="page-title">
-                <h2>Manage Products</h2>
+                <h2>Gérer les produits</h2>
             </div>
 
             <div class="card-section">
-                <h3>All Products</h3>
+                <h3>Tous les produits</h3>
                 <div id="productsList">
-                    <p class="loading">Loading products...</p>
+                    <p class="loading">Chargement des produits...</p>
                 </div>
             </div>
         </div>
@@ -173,15 +173,15 @@
         <!-- Manage Categories Tab -->
         <div id="categories" class="tab-content">
             <div class="page-title">
-                <h2>Manage Categories</h2>
+                <h2>Gérer les catégories</h2>
             </div>
 
             <!-- Add Category Form -->
             <div class="form-card">
-                <h3>Add New Category</h3>
+                <h3>Ajouter une nouvelle catégorie</h3>
                 <form id="categoryForm" onsubmit="addCategory(event)">
                     <div class="form-group">
-                        <label for="categoryName">Category Name</label>
+                        <label for="categoryName">Nom de la catégorie</label>
                         <input type="text" id="categoryName" required>
                     </div>
 
@@ -190,16 +190,16 @@
                         <textarea id="categoryDescription" rows="3"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Add Category</button>
+                    <button type="submit" class="btn btn-primary">Ajouter la catégorie</button>
                     <div id="categoryMessage" class="message" style="display: none;"></div>
                 </form>
             </div>
 
             <!-- Categories List -->
             <div class="card-section">
-                <h3>All Categories</h3>
+                <h3>Toutes les catégories</h3>
                 <div id="categoriesList">
-                    <p class="loading">Loading categories...</p>
+                    <p class="loading">Chargement des catégories...</p>
                 </div>
             </div>
         </div>
